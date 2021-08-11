@@ -15,7 +15,7 @@
     <dependencies>
         <dependency>
             <groupId>com.lmmmowi</groupId>
-            <artifactId>redis-java-transport</artifactId>
+            <artifactId>redis-java-protocol</artifactId>
         </dependency>
     </dependencies>
 </project>

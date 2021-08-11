@@ -1,7 +1,7 @@
 package com.lmmmowi.redis.cli;
 
 import com.lmmmowi.redis.client.ClientConfiguration;
-import com.lmmmowi.redis.client.DefaultRedisClient;
+import com.lmmmowi.redis.client.netty.NettyRedisClient;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -11,7 +11,7 @@ public class RedisCli {
 
     private static final String QUIT_COMMAND = "quit";
 
-    private DefaultRedisClient client;
+    private NettyRedisClient client;
 
     public static void main(String[] args) throws Exception {
         new RedisCli().run();
@@ -22,8 +22,9 @@ public class RedisCli {
         configuration.setHost("localhost");
         configuration.setPort(6379);
 
-        this.client = new DefaultRedisClient();
+        this.client = new NettyRedisClient();
         client.setConfiguration(configuration);
+        client.setClientProcessor(new ReplyPrinter());
         client.startup();
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));

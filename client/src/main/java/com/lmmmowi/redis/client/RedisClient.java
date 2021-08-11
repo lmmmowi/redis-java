@@ -7,4 +7,6 @@ public interface RedisClient {
     void shutdown();
 
     void send(String command);
+
+    void setClientProcessor(ClientProcessor clientProcessor);
 }

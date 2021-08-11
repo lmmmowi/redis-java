@@ -1,5 +1,7 @@
-package com.lmmmowi.redis.client;
+package com.lmmmowi.redis.client.netty;
 
+import com.lmmmowi.redis.client.ClientProcessor;
+import com.lmmmowi.redis.protocol.reply.RedisReply;
 import io.netty.buffer.ByteBufUtil;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelDuplexHandler;
@@ -16,8 +18,9 @@ import java.util.List;
 import java.util.function.Consumer;
 
 @AllArgsConstructor
-public class RedisClientChannelHandler extends ChannelDuplexHandler {
+public class NettyClientChannelHandler extends ChannelDuplexHandler {
 
+    private ClientProcessor clientProcessor;
     private Consumer<Channel> channelConsumer;
 
     @Override
@@ -40,7 +43,11 @@ public class RedisClientChannelHandler extends ChannelDuplexHandler {
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
         try {
             RedisMessage redisMessage = (RedisMessage) msg;
-            System.out.println(redisMessage);
+            RedisReply redisReply = NettyRedisMessageConverter.convert(redisMessage);
+
+            if (clientProcessor != null) {
+                clientProcessor.process(redisReply);
+            }
         } finally {
             ReferenceCountUtil.release(msg);
         }

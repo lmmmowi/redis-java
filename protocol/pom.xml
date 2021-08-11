@@ -10,12 +10,17 @@
         <version>${revision}</version>
     </parent>
 
-    <artifactId>redis-java-transport</artifactId>
+    <artifactId>redis-java-protocol</artifactId>
 
     <dependencies>
         <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-all</artifactId>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
         </dependency>
     </dependencies>
 </project>

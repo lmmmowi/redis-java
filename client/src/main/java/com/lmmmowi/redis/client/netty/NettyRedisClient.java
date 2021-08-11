@@ -1,5 +1,8 @@
-package com.lmmmowi.redis.client;
+package com.lmmmowi.redis.client.netty;
 
+import com.lmmmowi.redis.client.ClientConfiguration;
+import com.lmmmowi.redis.client.ClientProcessor;
+import com.lmmmowi.redis.client.RedisClient;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -12,10 +15,13 @@ import io.netty.handler.codec.redis.RedisEncoder;
 import lombok.AccessLevel;
 import lombok.Setter;
 
-public class DefaultRedisClient implements RedisClient {
+public class NettyRedisClient implements RedisClient {
 
     @Setter
     private ClientConfiguration configuration;
+
+    @Setter
+    private ClientProcessor clientProcessor;
 
     @Setter(AccessLevel.PRIVATE)
     private Channel channel;
@@ -37,7 +43,7 @@ public class DefaultRedisClient implements RedisClient {
                         pipeline.addLast(new RedisBulkStringAggregator());
                         pipeline.addLast(new RedisArrayAggregator());
                         pipeline.addLast(new RedisEncoder());
-                        pipeline.addLast(new RedisClientChannelHandler(DefaultRedisClient.this::setChannel));
+                        pipeline.addLast(new NettyClientChannelHandler(clientProcessor, NettyRedisClient.this::setChannel));
                     }
                 });
 
