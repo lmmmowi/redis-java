@@ -1,7 +1,6 @@
 package com.lmmmowi.redis.server.netty;
 
 import com.lmmmowi.redis.protocol.command.RedisCommand;
-import com.lmmmowi.redis.protocol.reply.ErrorReply;
 import com.lmmmowi.redis.protocol.reply.RedisReply;
 import com.lmmmowi.redis.protocol.reply.StatusReply;
 import com.lmmmowi.redis.server.RedisCommandLine;
@@ -22,7 +21,6 @@ public class NettyServerProcessor implements ServerProcessor {
     @Override
     public void process(RedisCommandLine redisCommandLine) {
         RedisCommand command = commandParseKit.parse(redisCommandLine);
-
         RedisCommandExecutor executor = commandExecutors.getExecutor(command);
         if (executor != null) {
             RedisReply reply = executor.execute(command);

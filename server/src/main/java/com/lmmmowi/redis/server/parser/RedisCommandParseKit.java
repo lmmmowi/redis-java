@@ -3,31 +3,26 @@ package com.lmmmowi.redis.server.parser;
 import com.lmmmowi.redis.protocol.command.RedisCommand;
 import com.lmmmowi.redis.protocol.command.UnkownCommand;
 import com.lmmmowi.redis.server.RedisCommandLine;
+import com.lmmmowi.redis.server.util.ClassUtils;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class RedisCommandParseKit {
 
-    private static final List<RedisCommandParser> SUPPORTED_PARSERS = Arrays.asList(
-            new PingCommandParser(),
-            new ClientCommandParser(),
-            new InfoCommandParser(),
-            new ScanCommandParser()
-    );
-
     private static final RedisCommandParseKit INSTANCE = new RedisCommandParseKit();
 
     private final Map<String, RedisCommandParser> parserMap;
 
     private RedisCommandParseKit() {
-        this.parserMap = SUPPORTED_PARSERS.stream().collect(Collectors.toMap(
-                RedisCommandParser::getCommandKey,
-                Function.identity()
-        ));
+        this.parserMap = ClassUtils.scan(getClass().getPackage(), RedisCommandParser.class)
+                .stream()
+                .map(ClassUtils::newInstance)
+                .collect(Collectors.toMap(
+                        RedisCommandParser::getCommandKey,
+                        Function.identity()
+                ));
     }
 
     public static RedisCommandParseKit getInstance() {

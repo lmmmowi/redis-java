@@ -4,15 +4,10 @@ import com.lmmmowi.redis.protocol.command.PingCommand;
 import com.lmmmowi.redis.protocol.reply.RedisReply;
 import com.lmmmowi.redis.protocol.reply.StatusReply;
 
-public class PingCommandExecutor implements RedisCommandExecutor<PingCommand> {
+class PingCommandExecutor extends AbstractCommandExecutor<PingCommand> {
 
     @Override
-    public Class<PingCommand> getSupportCommandType() {
-        return PingCommand.class;
-    }
-
-    @Override
-    public RedisReply execute(PingCommand command) {
+    protected RedisReply doExecute(PingCommand command) {
         return new StatusReply("PONG");
     }
 }
