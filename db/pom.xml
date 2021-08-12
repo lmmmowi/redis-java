@@ -10,29 +10,9 @@
         <version>${revision}</version>
     </parent>
 
-    <artifactId>redis-java-server</artifactId>
+    <artifactId>redis-java-db</artifactId>
 
     <dependencies>
-        <dependency>
-            <groupId>com.lmmmowi</groupId>
-            <artifactId>redis-java-db</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.lmmmowi</groupId>
-            <artifactId>redis-java-protocol</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-all</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>cn.hutool</groupId>
-            <artifactId>hutool-all</artifactId>
-        </dependency>
-
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>

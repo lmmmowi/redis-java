@@ -37,8 +37,13 @@ class NettyRedisMessageConverter {
             return new IntegerRedisMessage(((IntegerReply) redisReply).getValue());
         } else if (redisReply instanceof FullBulkStringReply) {
             FullBulkStringReply fullBulkStringReply = (FullBulkStringReply) redisReply;
-            ByteBuf content = ByteBufUtil.writeUtf8(ctx.alloc(), fullBulkStringReply.getContent());
-            return new FullBulkStringRedisMessage(content);
+            String content = fullBulkStringReply.getContent();
+            if (content == null) {
+                return FullBulkStringRedisMessage.NULL_INSTANCE;
+            } else {
+                ByteBuf byteBuf = ByteBufUtil.writeUtf8(ctx.alloc(), content);
+                return new FullBulkStringRedisMessage(byteBuf);
+            }
         } else if (redisReply instanceof ArrayReply) {
             ArrayReply arrayReply = (ArrayReply) redisReply;
             List<RedisMessage> children = arrayReply.getChildren()
