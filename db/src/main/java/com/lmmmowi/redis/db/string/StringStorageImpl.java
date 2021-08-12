@@ -3,7 +3,6 @@ package com.lmmmowi.redis.db.string;
 import com.lmmmowi.redis.db.GlobalHashTable;
 import com.lmmmowi.redis.db.Store;
 import com.lmmmowi.redis.db.StoreType;
-import com.lmmmowi.redis.db.exception.WrongTypeOperationException;
 
 public class StringStorageImpl implements StringStorage {
 
@@ -11,13 +10,10 @@ public class StringStorageImpl implements StringStorage {
 
     @Override
     public void set(String key, String value) {
-        Store store = globalHashTable.getStore(key);
+        Store store = globalHashTable.getStore(key, StoreType.STRING);
         if (store == null) {
             store = new Store(StoreType.STRING);
-        }
-
-        if (!StoreType.STRING.equals(store.getType())) {
-            throw new WrongTypeOperationException();
+            globalHashTable.setStore(key, store);
         }
 
         store.setValue(value);
@@ -25,13 +21,9 @@ public class StringStorageImpl implements StringStorage {
 
     @Override
     public String get(String key) {
-        Store store = globalHashTable.getStore(key);
+        Store store = globalHashTable.getStore(key, StoreType.STRING);
         if (store == null) {
             return null;
-        }
-
-        if (!StoreType.STRING.equals(store.getType())) {
-            throw new WrongTypeOperationException();
         }
 
         return (String) store.getValue();
