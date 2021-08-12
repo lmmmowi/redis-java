@@ -49,7 +49,6 @@ public class NettyServerChannelHandler extends ChannelDuplexHandler {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
         Channel channel = ctx.channel();
-        nettyClientHolder.setClientChannel(channel);
 
         try {
             RedisMessage redisMessage = (RedisMessage) msg;
@@ -60,10 +59,12 @@ public class NettyServerChannelHandler extends ChannelDuplexHandler {
             }
 
             if (serverProcessor != null) {
-                serverProcessor.process(redisCommandLine);
+                RedisReply redisReply = serverProcessor.process(redisCommandLine);
+                if (redisReply != null) {
+                    channel.writeAndFlush(redisReply);
+                }
             }
         } finally {
-            nettyClientHolder.reset();
             ReferenceCountUtil.release(msg);
         }
     }

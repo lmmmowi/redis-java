@@ -11,7 +11,6 @@ public class NettyClientHolder {
     private static final NettyClientHolder INSTANCE = new NettyClientHolder();
 
     private Map<Channel, ClientInfo> clients = new HashMap<>();
-    private static final ThreadLocal<Channel> clientChannel = new ThreadLocal<>();
 
     private NettyClientHolder() {
     }
@@ -22,21 +21,5 @@ public class NettyClientHolder {
 
     synchronized void put(Channel channel, ClientInfo clientInfo) {
         clients.put(channel, clientInfo);
-    }
-
-    public ClientInfo get(Channel channel) {
-        return clients.get(channel);
-    }
-
-    Channel getClientChannel() {
-        return clientChannel.get();
-    }
-
-    void setClientChannel(Channel channel) {
-        clientChannel.set(channel);
-    }
-
-    void reset() {
-        clientChannel.remove();
     }
 }

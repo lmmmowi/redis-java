@@ -1,7 +1,6 @@
 package com.lmmmowi.redis.server;
 
 import com.lmmmowi.redis.server.netty.NettyRedisServer;
-import com.lmmmowi.redis.server.netty.NettyServerProcessor;
 import com.lmmmowi.redis.server.netty.ServerConfiguration;
 
 public class RedisServerLauncher {
@@ -15,7 +14,7 @@ public class RedisServerLauncher {
         configuration.setPort(6378);
 
         NettyRedisServer server = new NettyRedisServer();
-        server.setServerProcessor(new NettyServerProcessor());
+        server.setServerProcessor(new DefaultServerProcessor());
         server.setConfiguration(configuration);
         server.startup();
     }
