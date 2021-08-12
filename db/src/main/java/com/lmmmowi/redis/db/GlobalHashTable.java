@@ -1,7 +1,5 @@
 package com.lmmmowi.redis.db;
 
-import com.lmmmowi.redis.db.exception.WrongTypeOperationException;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,16 +14,6 @@ public class GlobalHashTable {
 
     public static GlobalHashTable getInstance() {
         return INSTANCE;
-    }
-
-    public Store getStore(String key, StoreType type) {
-        Store store = this.getStore(key);
-        if (store != null && type != null) {
-            if (!type.equals(store.getType())) {
-                throw new WrongTypeOperationException();
-            }
-        }
-        return store;
     }
 
     public Store getStore(String key) {
