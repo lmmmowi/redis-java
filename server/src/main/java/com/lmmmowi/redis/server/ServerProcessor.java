@@ -1,6 +1,8 @@
 package com.lmmmowi.redis.server;
 
+import com.lmmmowi.redis.protocol.reply.RedisReply;
+
 public interface ServerProcessor {
 
-    void process(RedisCommandLine redisCommandLine);
+    RedisReply process(RedisCommandLine redisCommandLine);
 }
