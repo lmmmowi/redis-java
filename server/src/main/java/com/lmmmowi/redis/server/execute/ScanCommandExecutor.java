@@ -9,15 +9,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class ScanCommandExecutor implements RedisCommandExecutor<ScanCommand> {
+class ScanCommandExecutor extends AbstractCommandExecutor<ScanCommand> {
 
     @Override
-    public Class<ScanCommand> getSupportCommandType() {
-        return ScanCommand.class;
-    }
-
-    @Override
-    public RedisReply execute(ScanCommand command) {
+    protected RedisReply doExecute(ScanCommand command) {
         List<RedisReply> children = new ArrayList<>();
         children.add(new FullBulkStringReply("0"));
         children.add(new ArrayReply(Collections.emptyList()));
