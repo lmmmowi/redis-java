@@ -1,11 +1,16 @@
 package com.lmmmowi.redis.server.netty;
 
+import com.lmmmowi.redis.protocol.reply.*;
 import com.lmmmowi.redis.server.RedisCommandLine;
-import io.netty.handler.codec.redis.ArrayRedisMessage;
-import io.netty.handler.codec.redis.FullBulkStringRedisMessage;
-import io.netty.handler.codec.redis.RedisMessage;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufUtil;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.handler.codec.redis.*;
 import io.netty.util.CharsetUtil;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 class NettyRedisMessageConverter {
@@ -13,25 +18,36 @@ class NettyRedisMessageConverter {
     private NettyRedisMessageConverter() {
     }
 
-    public static RedisCommandLine convert(RedisMessage redisMessage) {
-        if (redisMessage instanceof ArrayRedisMessage) {
-            return convert((ArrayRedisMessage) redisMessage);
-        } else {
-            log.warn("unkown redis message type: {}", redisMessage.getClass().getName());
-            return null;
-        }
-    }
-
-    private static RedisCommandLine convert(ArrayRedisMessage message) {
-        String[] parts = message.children()
+    static RedisCommandLine convert(RedisMessage redisMessage) {
+        ArrayRedisMessage arrayRedisMessage = (ArrayRedisMessage) redisMessage;
+        String[] parts = arrayRedisMessage.children()
                 .stream()
-                .map(msg -> (FullBulkStringRedisMessage) msg)
-                .map(NettyRedisMessageConverter::convert)
+                .map(FullBulkStringRedisMessage.class::cast)
+                .map(msg -> msg.content().toString(CharsetUtil.UTF_8))
                 .toArray(String[]::new);
         return new RedisCommandLine(parts);
     }
 
-    private static String convert(FullBulkStringRedisMessage message) {
-        return message.content().toString(CharsetUtil.UTF_8);
+    static RedisMessage convert(RedisReply redisReply, ChannelHandlerContext ctx) {
+        if (redisReply instanceof StatusReply) {
+            return new SimpleStringRedisMessage(((StatusReply) redisReply).getContent());
+        } else if (redisReply instanceof ErrorReply) {
+            return new ErrorRedisMessage(((ErrorReply) redisReply).getContent());
+        } else if (redisReply instanceof IntegerReply) {
+            return new IntegerRedisMessage(((IntegerReply) redisReply).getValue());
+        } else if (redisReply instanceof FullBulkStringReply) {
+            FullBulkStringReply fullBulkStringReply = (FullBulkStringReply) redisReply;
+            ByteBuf content = ByteBufUtil.writeUtf8(ctx.alloc(), fullBulkStringReply.getContent());
+            return new FullBulkStringRedisMessage(content);
+        } else if (redisReply instanceof ArrayReply) {
+            ArrayReply arrayReply = (ArrayReply) redisReply;
+            List<RedisMessage> children = arrayReply.getChildren()
+                    .stream()
+                    .map(o -> convert(o, ctx))
+                    .collect(Collectors.toList());
+            return new ArrayRedisMessage(children);
+        } else {
+            return null;
+        }
     }
 }

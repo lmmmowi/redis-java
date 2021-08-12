@@ -1,7 +1,8 @@
 package com.lmmmowi.redis.server.netty;
 
-import com.lmmmowi.redis.server.RedisCommandLine;
+import com.lmmmowi.redis.protocol.reply.RedisReply;
 import com.lmmmowi.redis.server.ClientInfo;
+import com.lmmmowi.redis.server.RedisCommandLine;
 import com.lmmmowi.redis.server.ServerProcessor;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelDuplexHandler;
@@ -32,22 +33,30 @@ public class NettyServerChannelHandler extends ChannelDuplexHandler {
     }
 
     @Override
-    public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
-        super.write(ctx, msg, promise);
+    public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) {
+        RedisReply redisReply = (RedisReply) msg;
+        RedisMessage redisMessage = NettyRedisMessageConverter.convert(redisReply, ctx);
+        if (redisMessage != null) {
+            ctx.write(redisMessage, promise);
+
+            if (log.isDebugEnabled()) {
+                Channel channel = ctx.channel();
+                log.debug("write reply to channel[{}]: {}", channel.id(), redisMessage);
+            }
+        }
     }
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
         Channel channel = ctx.channel();
-        ClientInfo clientInfo = nettyClientHolder.get(channel);
-        nettyClientHolder.setCurrent(clientInfo);
+        nettyClientHolder.setClientChannel(channel);
 
         try {
             RedisMessage redisMessage = (RedisMessage) msg;
             RedisCommandLine redisCommandLine = NettyRedisMessageConverter.convert(redisMessage);
 
             if (log.isDebugEnabled()) {
-                log.debug("receive command: {}", redisCommandLine);
+                log.debug("receive command from channel[{}]: {}", channel.id(), redisCommandLine);
             }
 
             if (serverProcessor != null) {

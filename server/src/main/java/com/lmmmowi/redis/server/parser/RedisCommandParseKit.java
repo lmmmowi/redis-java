@@ -15,7 +15,8 @@ public class RedisCommandParseKit {
     private static final List<RedisCommandParser> SUPPORTED_PARSERS = Arrays.asList(
             new PingCommandParser(),
             new ClientCommandParser(),
-            new InfoCommandParser()
+            new InfoCommandParser(),
+            new ScanCommandParser()
     );
 
     private static final RedisCommandParseKit INSTANCE = new RedisCommandParseKit();
