@@ -2,10 +2,11 @@ package com.lmmmowi.redis.server.parser;
 
 import com.lmmmowi.redis.protocol.command.PingCommand;
 import com.lmmmowi.redis.protocol.command.RedisCommand;
-import com.lmmmowi.redis.server.exception.WrongNumberOfArgumentsException;
 import com.lmmmowi.redis.server.RedisCommandLine;
+import com.lmmmowi.redis.server.exception.CommandParseException;
+import com.lmmmowi.redis.server.exception.WrongNumberOfArgumentsException;
 
-public class PingCommandParser implements RedisCommandParser {
+class PingCommandParser implements RedisCommandParser {
 
     @Override
     public String getCommandKey() {
@@ -13,7 +14,7 @@ public class PingCommandParser implements RedisCommandParser {
     }
 
     @Override
-    public RedisCommand parse(RedisCommandLine redisCommandLine) {
+    public RedisCommand parse(RedisCommandLine redisCommandLine) throws CommandParseException {
         String[] parts = redisCommandLine.getParts();
         if (parts.length > 1) {
             throw new WrongNumberOfArgumentsException(getCommandKey());
