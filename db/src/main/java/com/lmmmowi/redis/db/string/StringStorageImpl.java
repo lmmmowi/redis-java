@@ -1,31 +1,29 @@
 package com.lmmmowi.redis.db.string;
 
-import com.lmmmowi.redis.db.GlobalHashTable;
-import com.lmmmowi.redis.db.Store;
+import com.lmmmowi.redis.db.AbstractStorage;
 import com.lmmmowi.redis.db.StoreType;
 
-public class StringStorageImpl implements StringStorage {
+public class StringStorageImpl extends AbstractStorage<StringStore> implements StringStorage {
 
-    private final GlobalHashTable globalHashTable = GlobalHashTable.getInstance();
+    @Override
+    protected StoreType getStoreType() {
+        return StoreType.STRING;
+    }
+
+    @Override
+    protected StringStore newStoreInstance() {
+        return new StringStore();
+    }
 
     @Override
     public void set(String key, String value) {
-        Store store = globalHashTable.getStore(key, StoreType.STRING);
-        if (store == null) {
-            store = new Store(StoreType.STRING);
-            globalHashTable.setStore(key, store);
-        }
-
+        StringStore store = this.computeIfAbsent(key);
         store.setValue(value);
     }
 
     @Override
     public String get(String key) {
-        Store store = globalHashTable.getStore(key, StoreType.STRING);
-        if (store == null) {
-            return null;
-        }
-
-        return (String) store.getValue();
+        StringStore store = this.getStore(key);
+        return store == null ? null : store.getValue();
     }
 }

@@ -1,14 +1,10 @@
 package com.lmmmowi.redis.db;
 
-import lombok.Data;
+public interface Store<T> {
 
-@Data
-public class Store {
+    StoreType getType();
 
-    private StoreType type;
-    private Object value;
+    T getValue();
 
-    public Store(StoreType type) {
-        this.type = type;
-    }
+    void setValue(T value);
 }
