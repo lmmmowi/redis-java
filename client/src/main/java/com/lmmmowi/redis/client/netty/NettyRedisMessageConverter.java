@@ -14,7 +14,7 @@ class NettyRedisMessageConverter {
     private NettyRedisMessageConverter() {
     }
 
-    public static RedisReply convert(RedisMessage redisMessage) {
+    static RedisReply convert(RedisMessage redisMessage) {
         if (redisMessage instanceof SimpleStringRedisMessage) {
             return convert((SimpleStringRedisMessage) redisMessage);
         } else if (redisMessage instanceof ErrorRedisMessage) {
