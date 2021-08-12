@@ -1,8 +1,9 @@
 package com.lmmmowi.redis.server.parser;
 
 import com.lmmmowi.redis.protocol.command.RedisCommand;
-import com.lmmmowi.redis.protocol.command.UnkownCommand;
 import com.lmmmowi.redis.server.RedisCommandLine;
+import com.lmmmowi.redis.server.exception.CommandParseException;
+import com.lmmmowi.redis.server.exception.UnkownCommandException;
 import com.lmmmowi.redis.server.util.ClassUtils;
 
 import java.util.Map;
@@ -29,17 +30,18 @@ public class RedisCommandParseKit {
         return INSTANCE;
     }
 
-    public RedisCommand parse(RedisCommandLine redisCommandLine) {
-        RedisCommandParser redisCommandParser = this.match(redisCommandLine);
+    public RedisCommand parse(RedisCommandLine redisCommandLine) throws CommandParseException {
+        String[] parts = redisCommandLine.getParts();
+        RedisCommandParser redisCommandParser = this.match(parts);
+
         if (redisCommandParser != null) {
             return redisCommandParser.parse(redisCommandLine);
         } else {
-            return new UnkownCommand(redisCommandLine.getParts());
+            throw new UnkownCommandException(redisCommandLine.getParts());
         }
     }
 
-    private RedisCommandParser match(RedisCommandLine redisCommandLine) {
-        String[] parts = redisCommandLine.getParts();
+    private RedisCommandParser match(String[] parts) {
         String commandKey = parts != null && parts.length > 0 ? parts[0].toLowerCase() : null;
         return parserMap.get(commandKey);
     }

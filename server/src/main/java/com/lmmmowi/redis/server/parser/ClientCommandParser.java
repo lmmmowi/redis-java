@@ -4,10 +4,11 @@ import com.lmmmowi.redis.protocol.command.ClientGetNameCommand;
 import com.lmmmowi.redis.protocol.command.ClientListCommand;
 import com.lmmmowi.redis.protocol.command.ClientSetNameCommand;
 import com.lmmmowi.redis.protocol.command.RedisCommand;
-import com.lmmmowi.redis.server.exception.WrongNumberOfArgumentsException;
 import com.lmmmowi.redis.server.RedisCommandLine;
+import com.lmmmowi.redis.server.exception.CommandParseException;
+import com.lmmmowi.redis.server.exception.WrongNumberOfArgumentsException;
 
-public class ClientCommandParser implements RedisCommandParser {
+class ClientCommandParser implements RedisCommandParser {
 
     @Override
     public String getCommandKey() {
@@ -15,7 +16,7 @@ public class ClientCommandParser implements RedisCommandParser {
     }
 
     @Override
-    public RedisCommand parse(RedisCommandLine redisCommandLine) {
+    public RedisCommand parse(RedisCommandLine redisCommandLine) throws CommandParseException {
         String[] parts = redisCommandLine.getParts();
         if (parts.length < 2 || parts[1] == null) {
             throw new WrongNumberOfArgumentsException(getCommandKey());
@@ -24,7 +25,11 @@ public class ClientCommandParser implements RedisCommandParser {
         String subCommand = parts[1].toLowerCase();
         switch (subCommand) {
             case "setname":
-                return this.parseClientSetNameCommand(subCommand, parts);
+                if (parts.length != 3 || parts[2] == null) {
+                    throw new WrongNumberOfArgumentsException(subCommand);
+                } else {
+                    return new ClientSetNameCommand(parts[2]);
+                }
             case "getname":
                 return new ClientGetNameCommand();
             case "list":
@@ -33,13 +38,5 @@ public class ClientCommandParser implements RedisCommandParser {
             default:
                 throw new WrongNumberOfArgumentsException(subCommand);
         }
-    }
-
-    private ClientSetNameCommand parseClientSetNameCommand(String subCommand, String[] parts) {
-        if (parts.length != 3 || parts[2] == null) {
-            throw new WrongNumberOfArgumentsException(subCommand);
-        }
-
-        return new ClientSetNameCommand(parts[2]);
     }
 }

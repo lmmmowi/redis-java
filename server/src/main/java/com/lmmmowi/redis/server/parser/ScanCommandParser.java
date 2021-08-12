@@ -4,7 +4,7 @@ import com.lmmmowi.redis.protocol.command.RedisCommand;
 import com.lmmmowi.redis.protocol.command.ScanCommand;
 import com.lmmmowi.redis.server.RedisCommandLine;
 
-public class ScanCommandParser implements RedisCommandParser {
+class ScanCommandParser implements RedisCommandParser {
 
     @Override
     public String getCommandKey() {

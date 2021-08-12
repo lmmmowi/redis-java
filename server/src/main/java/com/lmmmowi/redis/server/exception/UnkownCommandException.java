@@ -1,16 +1,15 @@
-package com.lmmmowi.redis.protocol.command;
-
-import lombok.AllArgsConstructor;
+package com.lmmmowi.redis.server.exception;
 
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-@AllArgsConstructor
-public class UnkownCommand implements RedisCommand {
+public class UnkownCommandException extends CommandParseException {
 
-    private String[] parts;
+    public UnkownCommandException(String[] parts) {
+        super(formatError(parts));
+    }
 
-    public String getError() {
+    private static String formatError(String[] parts) {
         String command = parts[0];
         String args = IntStream.range(1, parts.length)
                 .boxed()
