@@ -1,17 +1,17 @@
 package com.lmmmowi.redis.server.parser;
 
+import com.lmmmowi.redis.protocol.command.LpushxCommand;
 import com.lmmmowi.redis.protocol.command.RedisCommand;
-import com.lmmmowi.redis.protocol.command.RpushXCommand;
 import com.lmmmowi.redis.server.RedisCommandLine;
 import com.lmmmowi.redis.server.exception.CommandParseException;
 import com.lmmmowi.redis.server.exception.WrongNumberOfArgumentsException;
 
 import java.util.Arrays;
 
-public class RpushXCommandParser implements RedisCommandParser {
+public class LpushxCommandParser implements RedisCommandParser {
     @Override
     public String getCommandKey() {
-        return "rpushx";
+        return "lpushx";
     }
 
     @Override
@@ -20,8 +20,9 @@ public class RpushXCommandParser implements RedisCommandParser {
         if (parts.length <= 2) {
             throw new WrongNumberOfArgumentsException(getCommandKey());
         }
-        String key = parts[1];
+
+        String key = parts[1].toLowerCase();
         String[] values = Arrays.copyOfRange(parts, 2, parts.length);
-        return new RpushXCommand(key, values);
+        return new LpushxCommand(key, values);
     }
 }
