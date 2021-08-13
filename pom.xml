@@ -15,6 +15,7 @@
         <module>client</module>
         <module>protocol</module>
         <module>db</module>
+        <module>persist</module>
     </modules>
 
     <properties>
@@ -33,6 +34,12 @@
             <dependency>
                 <groupId>com.lmmmowi</groupId>
                 <artifactId>redis-java-client</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.lmmmowi</groupId>
+                <artifactId>redis-java-persist</artifactId>
                 <version>${project.version}</version>
             </dependency>
 

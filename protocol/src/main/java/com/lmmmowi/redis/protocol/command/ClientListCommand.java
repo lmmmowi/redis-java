@@ -1,5 +1,5 @@
 package com.lmmmowi.redis.protocol.command;
 
-public class ClientListCommand implements RedisCommand {
+public class ClientListCommand extends AbstractCommand {
 
 }

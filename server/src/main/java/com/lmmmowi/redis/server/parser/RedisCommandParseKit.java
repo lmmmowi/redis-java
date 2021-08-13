@@ -35,7 +35,9 @@ public class RedisCommandParseKit {
         RedisCommandParser redisCommandParser = this.match(parts);
 
         if (redisCommandParser != null) {
-            return redisCommandParser.parse(redisCommandLine);
+            RedisCommand command = redisCommandParser.parse(redisCommandLine);
+            command.setRawParts(parts);
+            return command;
         } else {
             throw new UnkownCommandException(redisCommandLine.getParts());
         }

@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class LpushCommand implements RedisCommand {
+public class LpushCommand extends AbstractCommand {
 
     private String key;
     private String[] values;

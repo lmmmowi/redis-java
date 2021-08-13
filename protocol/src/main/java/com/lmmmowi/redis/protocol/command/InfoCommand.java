@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class InfoCommand implements RedisCommand {
+public class InfoCommand extends AbstractCommand {
 
     private String section;
 }

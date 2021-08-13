@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class ClientSetNameCommand implements RedisCommand {
+public class ClientSetNameCommand extends AbstractCommand {
 
     private String name;
 }

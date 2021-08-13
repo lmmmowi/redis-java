@@ -1,4 +1,4 @@
 package com.lmmmowi.redis.protocol.command;
 
-public class PingCommand implements RedisCommand {
+public class PingCommand extends AbstractCommand {
 }
