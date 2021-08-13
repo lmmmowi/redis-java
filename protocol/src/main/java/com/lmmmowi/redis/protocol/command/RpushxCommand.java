@@ -5,7 +5,9 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class LpushXCommand implements RedisCommand {
+public class RpushxCommand implements RedisCommand {
+
     private String key;
     private String[] values;
+
 }
