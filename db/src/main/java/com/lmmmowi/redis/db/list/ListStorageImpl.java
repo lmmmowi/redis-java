@@ -1,7 +1,6 @@
 package com.lmmmowi.redis.db.list;
 
 import com.lmmmowi.redis.db.AbstractStorage;
-import com.lmmmowi.redis.db.Store;
 import com.lmmmowi.redis.db.StoreType;
 
 import java.util.Arrays;
@@ -31,7 +30,7 @@ public class ListStorageImpl extends AbstractStorage<ListStore> implements ListS
 
     @Override
     public long lpushx(String key, String[] values) {
-        Store store = this.getStore(key);
+        ListStore store = this.getStore(key);
         return store == null ? 0L : this.lpush(key, values);
     }
 
@@ -45,7 +44,7 @@ public class ListStorageImpl extends AbstractStorage<ListStore> implements ListS
 
     @Override
     public long rpushx(String key, String[] values) {
-        Store store = this.getStore(key);
+        ListStore store = this.getStore(key);
         return store == null ? 0L : this.rpush(key, values);
     }
 

@@ -2,13 +2,13 @@ package com.lmmmowi.redis.server.execute;
 
 import com.lmmmowi.redis.db.RedisDb;
 import com.lmmmowi.redis.db.list.ListStorage;
-import com.lmmmowi.redis.protocol.command.RpushXCommand;
+import com.lmmmowi.redis.protocol.command.RpushxCommand;
 import com.lmmmowi.redis.protocol.reply.IntegerReply;
 import com.lmmmowi.redis.protocol.reply.RedisReply;
 
-public class RpushXCommandExecutor extends AbstractCommandExecutor<RpushXCommand> {
+public class RpushxCommandExecutor extends AbstractCommandExecutor<RpushxCommand> {
     @Override
-    protected RedisReply doExecute(RpushXCommand command) {
+    protected RedisReply doExecute(RpushxCommand command) {
         String key = command.getKey();
         String[] values = command.getValues();
 
