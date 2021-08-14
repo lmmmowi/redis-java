@@ -1,7 +1,7 @@
-package com.lmmmowi.redis.db.string;
+package com.lmmmowi.redis.db.store.string;
 
-import com.lmmmowi.redis.db.Store;
-import com.lmmmowi.redis.db.StoreType;
+import com.lmmmowi.redis.db.store.Store;
+import com.lmmmowi.redis.db.store.StoreType;
 import lombok.Getter;
 import lombok.Setter;
 

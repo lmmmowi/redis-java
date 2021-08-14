@@ -1,5 +1,6 @@
-package com.lmmmowi.redis.db;
+package com.lmmmowi.redis.db.store;
 
+import com.lmmmowi.redis.db.GlobalHashTable;
 import com.lmmmowi.redis.db.exception.WrongTypeOperationException;
 
 public abstract class AbstractStorage<T extends Store> {

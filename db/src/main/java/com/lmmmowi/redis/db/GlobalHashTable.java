@@ -1,5 +1,7 @@
 package com.lmmmowi.redis.db;
 
+import com.lmmmowi.redis.db.store.Store;
+
 import java.util.HashMap;
 import java.util.Map;
 

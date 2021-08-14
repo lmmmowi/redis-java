@@ -1,4 +1,4 @@
-package com.lmmmowi.redis.db.string;
+package com.lmmmowi.redis.db.store.string;
 
 public interface StringStorage {
 

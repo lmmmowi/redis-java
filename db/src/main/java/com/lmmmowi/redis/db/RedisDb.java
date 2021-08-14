@@ -1,16 +1,16 @@
 package com.lmmmowi.redis.db;
 
-import com.lmmmowi.redis.db.list.ListStorage;
-import com.lmmmowi.redis.db.list.ListStorageImpl;
-import com.lmmmowi.redis.db.string.StringStorage;
-import com.lmmmowi.redis.db.string.StringStorageImpl;
+import com.lmmmowi.redis.db.persist.aof.AofManager;
+
+import java.security.InvalidParameterException;
 
 public class RedisDb {
 
+    private static final int DB_NUM = 16;
+
     private static final RedisDb INSTANCE = new RedisDb();
 
-    private StringStorage stringStorage = new StringStorageImpl();
-    private ListStorage listStorage = new ListStorageImpl();
+    private DbInstance[] instances = new DbInstance[DB_NUM];
 
     private RedisDb() {
     }
@@ -19,11 +19,22 @@ public class RedisDb {
         return INSTANCE;
     }
 
-    public StringStorage getStringStorage() {
-        return this.stringStorage;
+    public void init() {
+        for (int i = 0; i < instances.length; i++) {
+            instances[i] = new DbInstanceImpl();
+        }
+
+        AofManager.getInstance().init();
     }
 
-    public ListStorage getListStorage() {
-        return this.listStorage;
+    public void destroy() {
+        AofManager.getInstance().destroy();
+    }
+
+    public DbInstance select(int dbIndex) {
+        if (dbIndex >= instances.length || dbIndex < 0) {
+            throw new InvalidParameterException("invalid db index");
+        }
+        return instances[dbIndex];
     }
 }

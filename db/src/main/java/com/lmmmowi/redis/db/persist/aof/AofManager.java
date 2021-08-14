@@ -1,4 +1,4 @@
-package com.lmmmowi.redis.persist.aof;
+package com.lmmmowi.redis.db.persist.aof;
 
 import cn.hutool.core.io.FileUtil;
 import com.lmmmowi.redis.protocol.annotation.AOF;

@@ -1,6 +1,6 @@
 package com.lmmmowi.redis.server;
 
-import com.lmmmowi.redis.persist.aof.AofManager;
+import com.lmmmowi.redis.db.RedisDb;
 import com.lmmmowi.redis.server.netty.NettyRedisServer;
 import com.lmmmowi.redis.server.netty.ServerConfiguration;
 
@@ -11,7 +11,7 @@ public class RedisServerLauncher {
     }
 
     public void run() {
-        AofManager.getInstance().init();
+        RedisDb.getInstance().init();
 
         ServerConfiguration configuration = new ServerConfiguration();
         configuration.setPort(6378);
@@ -24,7 +24,7 @@ public class RedisServerLauncher {
         Runtime.getRuntime().addShutdownHook(new Thread("redis-server-shutdown-hook") {
             @Override
             public void run() {
-                AofManager.getInstance().destroy();
+                RedisDb.getInstance().destroy();
             }
         });
     }

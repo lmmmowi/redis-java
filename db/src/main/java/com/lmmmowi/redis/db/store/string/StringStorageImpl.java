@@ -1,7 +1,7 @@
-package com.lmmmowi.redis.db.string;
+package com.lmmmowi.redis.db.store.string;
 
-import com.lmmmowi.redis.db.AbstractStorage;
-import com.lmmmowi.redis.db.StoreType;
+import com.lmmmowi.redis.db.store.AbstractStorage;
+import com.lmmmowi.redis.db.store.StoreType;
 
 public class StringStorageImpl extends AbstractStorage<StringStore> implements StringStorage {
 

@@ -1,4 +1,4 @@
-package com.lmmmowi.redis.db;
+package com.lmmmowi.redis.db.store;
 
 public enum StoreType {
 

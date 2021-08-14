@@ -1,4 +1,4 @@
-package com.lmmmowi.redis.db.list;
+package com.lmmmowi.redis.db.store.list;
 
 public interface ListStorage {
 

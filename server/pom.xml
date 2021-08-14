@@ -15,7 +15,7 @@
     <dependencies>
         <dependency>
             <groupId>com.lmmmowi</groupId>
-            <artifactId>redis-java-persist</artifactId>
+            <artifactId>redis-java-db</artifactId>
         </dependency>
 
         <dependency>
