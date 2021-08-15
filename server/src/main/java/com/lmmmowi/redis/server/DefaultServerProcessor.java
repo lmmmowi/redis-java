@@ -1,5 +1,6 @@
 package com.lmmmowi.redis.server;
 
+import com.lmmmowi.redis.db.exception.DbOperationException;
 import com.lmmmowi.redis.protocol.command.RedisCommand;
 import com.lmmmowi.redis.protocol.reply.ErrorReply;
 import com.lmmmowi.redis.protocol.reply.RedisReply;
@@ -27,7 +28,7 @@ public class DefaultServerProcessor implements ServerProcessor {
                 log.warn("can not find executor for command type: {}", command.getClass().getSimpleName());
                 return new StatusReply("OK");
             }
-        } catch (CommandParseException e) {
+        } catch (CommandParseException | DbOperationException e) {
             return new ErrorReply(e.getMessage());
         }
     }

@@ -7,16 +7,7 @@ import java.util.Map;
 
 public class GlobalHashTable {
 
-    private static final GlobalHashTable INSTANCE = new GlobalHashTable();
-
     private Map<String, Store> map = new HashMap<>();
-
-    private GlobalHashTable() {
-    }
-
-    public static GlobalHashTable getInstance() {
-        return INSTANCE;
-    }
 
     public Store getStore(String key) {
         return map.get(key);

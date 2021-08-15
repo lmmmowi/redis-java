@@ -1,6 +1,7 @@
 package com.lmmmowi.redis.server.netty;
 
 import com.lmmmowi.redis.protocol.reply.RedisReply;
+import com.lmmmowi.redis.server.ClientHolder;
 import com.lmmmowi.redis.server.ClientInfo;
 import com.lmmmowi.redis.server.RedisCommandLine;
 import com.lmmmowi.redis.server.ServerProcessor;
@@ -15,8 +16,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class NettyServerChannelHandler extends ChannelDuplexHandler {
 
+    private final ClientHolder clientHolder = ClientHolder.getInstance();
     private final ServerProcessor serverProcessor;
-    private final NettyClientHolder nettyClientHolder = NettyClientHolder.getInstance();
 
     public NettyServerChannelHandler(ServerProcessor serverProcessor) {
         this.serverProcessor = serverProcessor;
@@ -25,10 +26,11 @@ public class NettyServerChannelHandler extends ChannelDuplexHandler {
     @Override
     public void channelActive(ChannelHandlerContext ctx) {
         Channel channel = ctx.channel();
-        nettyClientHolder.put(channel, new ClientInfo());
+        String remoteAddress = channel.remoteAddress().toString();
+        ClientInfo clientInfo = clientHolder.init(remoteAddress);
 
         if (log.isDebugEnabled()) {
-            log.debug("new client connected.");
+            log.debug("new client[{}] connected.", clientInfo);
         }
     }
 

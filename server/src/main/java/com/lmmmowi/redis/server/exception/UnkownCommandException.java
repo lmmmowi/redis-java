@@ -15,6 +15,6 @@ public class UnkownCommandException extends CommandParseException {
                 .boxed()
                 .map(i -> String.format("`%s`,", parts[i]))
                 .collect(Collectors.joining(" "));
-        return String.format("ERR unknown command `%s`,with args beginning with: %s", command, args);
+        return String.format("unknown command `%s`,with args beginning with: %s", command, args);
     }
 }

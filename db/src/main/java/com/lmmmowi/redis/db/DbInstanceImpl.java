@@ -7,8 +7,9 @@ import com.lmmmowi.redis.db.store.string.StringStorageImpl;
 
 public class DbInstanceImpl implements DbInstance {
 
-    private StringStorage stringStorage = new StringStorageImpl();
-    private ListStorage listStorage = new ListStorageImpl();
+    private final GlobalHashTable globalHashTable = new GlobalHashTable();
+    private final StringStorage stringStorage = new StringStorageImpl(globalHashTable);
+    private final ListStorage listStorage = new ListStorageImpl(globalHashTable);
 
     @Override
     public StringStorage getStringStorage() {

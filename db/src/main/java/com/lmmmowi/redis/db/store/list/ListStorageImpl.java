@@ -1,5 +1,6 @@
 package com.lmmmowi.redis.db.store.list;
 
+import com.lmmmowi.redis.db.GlobalHashTable;
 import com.lmmmowi.redis.db.store.AbstractStorage;
 import com.lmmmowi.redis.db.store.StoreType;
 
@@ -7,6 +8,10 @@ import java.util.Arrays;
 import java.util.List;
 
 public class ListStorageImpl extends AbstractStorage<ListStore> implements ListStorage {
+
+    public ListStorageImpl(GlobalHashTable globalHashTable) {
+        super(globalHashTable);
+    }
 
     @Override
     protected StoreType getStoreType() {

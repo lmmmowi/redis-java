@@ -9,9 +9,12 @@ import com.lmmmowi.redis.db.store.list.ListStorage;
 import com.lmmmowi.redis.db.store.string.StringStorage;
 import com.lmmmowi.redis.protocol.command.RedisCommand;
 import com.lmmmowi.redis.protocol.reply.RedisReply;
+import com.lmmmowi.redis.server.ClientHolder;
+import com.lmmmowi.redis.server.ClientInfo;
 
 abstract class AbstractCommandExecutor<T extends RedisCommand, S extends DataStorage> implements RedisCommandExecutor {
 
+    private final ClientHolder clientHolder = ClientHolder.getInstance();
     private final AofManager aofManager = AofManager.getInstance();
 
     private Class<T> redisCommandType;
@@ -53,17 +56,22 @@ abstract class AbstractCommandExecutor<T extends RedisCommand, S extends DataSto
     }
 
     protected S getStorage() {
-        DbInstance db = RedisDb.getInstance().select(0);
         DataStorage dataStorage = null;
         if (StringStorage.class.equals(dataStorageType)) {
-            dataStorage = db.getStringStorage();
+            dataStorage = currentDbInstance().getStringStorage();
         } else if (ListStorage.class.equals(dataStorageType)) {
-            dataStorage = db.getListStorage();
+            dataStorage = currentDbInstance().getListStorage();
         }
         return (S) dataStorage;
     }
 
+    private DbInstance currentDbInstance() {
+        int dbIndex = currentDbIndex();
+        return RedisDb.getInstance().select(dbIndex);
+    }
+
     private int currentDbIndex() {
-        return 0;
+        ClientInfo clientInfo = clientHolder.getClientInfo();
+        return clientInfo.getDbIndex();
     }
 }

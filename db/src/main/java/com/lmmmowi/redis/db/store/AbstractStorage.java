@@ -5,7 +5,11 @@ import com.lmmmowi.redis.db.exception.WrongTypeOperationException;
 
 public abstract class AbstractStorage<T extends Store> implements DataStorage {
 
-    protected final GlobalHashTable globalHashTable = GlobalHashTable.getInstance();
+    protected final GlobalHashTable globalHashTable;
+
+    public AbstractStorage(GlobalHashTable globalHashTable) {
+        this.globalHashTable = globalHashTable;
+    }
 
     protected abstract StoreType getStoreType();
 
