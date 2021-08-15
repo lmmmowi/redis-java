@@ -1,6 +1,7 @@
 package com.lmmmowi.redis.db;
 
-import com.lmmmowi.redis.db.persist.aof.AofManager;
+import com.lmmmowi.redis.db.aof.AofManager;
+import com.lmmmowi.redis.db.aof.AofResumeProcessor;
 
 import java.security.InvalidParameterException;
 
@@ -24,7 +25,7 @@ public class RedisDb {
             instances[i] = new DbInstanceImpl();
         }
 
-        AofManager.getInstance().init();
+        AofManager.getInstance().init(new AofResumeProcessor());
     }
 
     public void destroy() {

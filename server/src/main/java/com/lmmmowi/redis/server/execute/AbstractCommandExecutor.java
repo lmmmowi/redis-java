@@ -3,7 +3,7 @@ package com.lmmmowi.redis.server.execute;
 import cn.hutool.core.util.ClassUtil;
 import com.lmmmowi.redis.db.DbInstance;
 import com.lmmmowi.redis.db.RedisDb;
-import com.lmmmowi.redis.db.persist.aof.AofManager;
+import com.lmmmowi.redis.db.aof.AofManager;
 import com.lmmmowi.redis.db.store.DataStorage;
 import com.lmmmowi.redis.db.store.list.ListStorage;
 import com.lmmmowi.redis.db.store.string.StringStorage;
@@ -42,7 +42,10 @@ abstract class AbstractCommandExecutor<T extends RedisCommand, S extends DataSto
         }
 
         // 命令执行完成后追加AOF日志
-        aofManager.append(currentDbIndex(), command);
+        ClientInfo clientInfo = clientHolder.getClientInfo();
+        if (!clientInfo.isSystemClient()) {
+            aofManager.append(currentDbIndex(), command);
+        }
 
         return reply;
     }

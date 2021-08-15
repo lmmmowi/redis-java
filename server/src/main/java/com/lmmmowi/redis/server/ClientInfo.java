@@ -9,6 +9,7 @@ public class ClientInfo {
 
     private String name;
     private int dbIndex;
+    private boolean systemClient;
 
     ClientInfo(String name) {
         this.name = name;

@@ -1,4 +1,4 @@
-package com.lmmmowi.redis.db.persist.aof;
+package com.lmmmowi.redis.db.aof;
 
 import cn.hutool.core.io.FileUtil;
 import com.lmmmowi.redis.protocol.annotation.AOF;
@@ -21,7 +21,7 @@ public class AofManager {
         return INSTANCE;
     }
 
-    public void init() {
+    public void init(AofResumeExecutor aofResumeExecutor) {
         try {
             File appendFile = new File("data/appendonly.aof");
             log.info("init aof file: {}", appendFile.getAbsolutePath());
@@ -29,10 +29,13 @@ public class AofManager {
             // 创建AOF文件
             FileUtil.mkParentDirs(appendFile);
 
+            // 从AOF恢复数据
+            new AofResume(aofResumeExecutor).run(appendFile);
+
             aofCache = new AofCache(appendFile);
             aofCache.open();
         } catch (IOException e) {
-            throw new IllegalStateException("fail to open aof cache", e);
+            throw new IllegalStateException("fail to init aof", e);
         }
     }
 
