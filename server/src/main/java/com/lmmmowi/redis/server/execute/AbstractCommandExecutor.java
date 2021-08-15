@@ -65,7 +65,7 @@ abstract class AbstractCommandExecutor<T extends RedisCommand, S extends DataSto
         return (S) dataStorage;
     }
 
-    private DbInstance currentDbInstance() {
+    protected DbInstance currentDbInstance() {
         int dbIndex = currentDbIndex();
         return RedisDb.getInstance().select(dbIndex);
     }

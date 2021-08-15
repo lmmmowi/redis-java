@@ -2,8 +2,11 @@ package com.lmmmowi.redis.db;
 
 import com.lmmmowi.redis.db.store.Store;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class GlobalHashTable {
 
@@ -24,5 +27,19 @@ public class GlobalHashTable {
 
     public void remove(String key) {
         map.remove(key);
+    }
+
+    public Collection<String> keys(String patternStr) {
+        String regex = patternStr.replace("*", ".*");
+        Pattern pattern = Pattern.compile(regex);
+
+        return map.keySet()
+                .stream()
+                .filter(s -> pattern.matcher(s).matches())
+                .collect(Collectors.toList());
+    }
+
+    public Collection<String> scan(int count) {
+        return map.keySet();
     }
 }
