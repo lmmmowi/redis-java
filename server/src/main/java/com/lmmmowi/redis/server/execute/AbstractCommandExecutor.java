@@ -4,31 +4,66 @@ import cn.hutool.core.util.ClassUtil;
 import com.lmmmowi.redis.db.DbInstance;
 import com.lmmmowi.redis.db.RedisDb;
 import com.lmmmowi.redis.db.persist.aof.AofManager;
+import com.lmmmowi.redis.db.store.DataStorage;
+import com.lmmmowi.redis.db.store.list.ListStorage;
+import com.lmmmowi.redis.db.store.string.StringStorage;
 import com.lmmmowi.redis.protocol.command.RedisCommand;
 import com.lmmmowi.redis.protocol.reply.RedisReply;
 
-abstract class AbstractCommandExecutor<T extends RedisCommand> implements RedisCommandExecutor {
+abstract class AbstractCommandExecutor<T extends RedisCommand, S extends DataStorage> implements RedisCommandExecutor {
 
     private final AofManager aofManager = AofManager.getInstance();
 
+    private Class<T> redisCommandType;
+    private Class<S> dataStorageType;
+
+    AbstractCommandExecutor() {
+        this.redisCommandType = (Class<T>) ClassUtil.getTypeArgument(getClass(), 0);
+        this.dataStorageType = (Class<S>) ClassUtil.getTypeArgument(getClass(), 1);
+    }
+
     @Override
     public Class<T> getSupportCommandType() {
-        return (Class<T>) ClassUtil.getTypeArgument(getClass(), 0);
+        return this.redisCommandType;
     }
 
     @Override
     public RedisReply execute(RedisCommand command) {
-        RedisReply reply = this.doExecute((T) command);
+        RedisReply reply;
+
+        S storage = this.getStorage();
+        if (storage != null) {
+            reply = this.doExecute((T) command, storage);
+        } else {
+            reply = this.doExecute((T) command);
+        }
 
         // 命令执行完成后追加AOF日志
-        aofManager.append(command);
+        aofManager.append(currentDbIndex(), command);
 
         return reply;
     }
 
-    protected abstract RedisReply doExecute(T command);
+    protected RedisReply doExecute(T command, S storage) {
+        throw new UnsupportedOperationException();
+    }
 
-    protected DbInstance getDbInstance() {
-        return RedisDb.getInstance().select(0);
+    protected RedisReply doExecute(T command) {
+        throw new UnsupportedOperationException();
+    }
+
+    protected S getStorage() {
+        DbInstance db = RedisDb.getInstance().select(0);
+        DataStorage dataStorage = null;
+        if (StringStorage.class.equals(dataStorageType)) {
+            dataStorage = db.getStringStorage();
+        } else if (ListStorage.class.equals(dataStorageType)) {
+            dataStorage = db.getListStorage();
+        }
+        return (S) dataStorage;
+    }
+
+    private int currentDbIndex() {
+        return 0;
     }
 }

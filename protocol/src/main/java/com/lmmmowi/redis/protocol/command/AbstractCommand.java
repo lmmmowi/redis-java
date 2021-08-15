@@ -1,5 +1,7 @@
 package com.lmmmowi.redis.protocol.command;
 
+import com.lmmmowi.redis.protocol.CommandSerializer;
+
 abstract class AbstractCommand implements RedisCommand {
 
     private String[] parts;
@@ -11,12 +13,6 @@ abstract class AbstractCommand implements RedisCommand {
 
     @Override
     public String serialize() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("*").append(parts.length).append("\r\n");
-        for (String part : parts) {
-            sb.append("$").append(part.length()).append("\r\n");
-            sb.append(part).append("\r\n");
-        }
-        return sb.toString();
+        return CommandSerializer.serialize(parts);
     }
 }

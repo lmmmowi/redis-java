@@ -3,6 +3,7 @@ package com.lmmmowi.redis.db.persist.aof;
 import cn.hutool.core.io.FileUtil;
 import com.lmmmowi.redis.protocol.annotation.AOF;
 import com.lmmmowi.redis.protocol.command.RedisCommand;
+import com.lmmmowi.redis.protocol.command.SelectCommand;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
@@ -14,6 +15,7 @@ public class AofManager {
     private static final AofManager INSTANCE = new AofManager();
 
     private AofCache aofCache;
+    private Integer selectedDbIndex;
 
     public static AofManager getInstance() {
         return INSTANCE;
@@ -41,9 +43,15 @@ public class AofManager {
         }
     }
 
-    public void append(RedisCommand command) {
+    public void append(int dbIndex, RedisCommand command) {
         if (this.shouldAppendAof(command)) {
             try {
+                if (selectedDbIndex == null || !selectedDbIndex.equals(dbIndex)) {
+                    RedisCommand selectCommand = new SelectCommand(dbIndex);
+                    aofCache.write(selectCommand);
+                    selectedDbIndex = dbIndex;
+                }
+
                 aofCache.write(command);
             } catch (IOException e) {
                 throw new IllegalStateException("fail to append aof log", e);

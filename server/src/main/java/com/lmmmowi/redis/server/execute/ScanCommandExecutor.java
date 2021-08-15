@@ -1,5 +1,6 @@
 package com.lmmmowi.redis.server.execute;
 
+import com.lmmmowi.redis.db.store.DataStorage;
 import com.lmmmowi.redis.protocol.command.ScanCommand;
 import com.lmmmowi.redis.protocol.reply.ArrayReply;
 import com.lmmmowi.redis.protocol.reply.FullBulkStringReply;
@@ -9,7 +10,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-class ScanCommandExecutor extends AbstractCommandExecutor<ScanCommand> {
+class ScanCommandExecutor extends AbstractCommandExecutor<ScanCommand, DataStorage> {
 
     @Override
     protected RedisReply doExecute(ScanCommand command) {

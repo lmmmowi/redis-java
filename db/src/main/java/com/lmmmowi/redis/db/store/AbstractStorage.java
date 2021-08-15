@@ -3,7 +3,7 @@ package com.lmmmowi.redis.db.store;
 import com.lmmmowi.redis.db.GlobalHashTable;
 import com.lmmmowi.redis.db.exception.WrongTypeOperationException;
 
-public abstract class AbstractStorage<T extends Store> {
+public abstract class AbstractStorage<T extends Store> implements DataStorage {
 
     protected final GlobalHashTable globalHashTable = GlobalHashTable.getInstance();
 

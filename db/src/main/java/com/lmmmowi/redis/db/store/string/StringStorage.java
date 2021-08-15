@@ -1,6 +1,8 @@
 package com.lmmmowi.redis.db.store.string;
 
-public interface StringStorage {
+import com.lmmmowi.redis.db.store.DataStorage;
+
+public interface StringStorage extends DataStorage {
 
     void set(String key, String value);
 

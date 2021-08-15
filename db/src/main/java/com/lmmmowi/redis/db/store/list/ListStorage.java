@@ -1,6 +1,8 @@
 package com.lmmmowi.redis.db.store.list;
 
-public interface ListStorage {
+import com.lmmmowi.redis.db.store.DataStorage;
+
+public interface ListStorage extends DataStorage {
 
     long lpush(String key, String[] values);
 
