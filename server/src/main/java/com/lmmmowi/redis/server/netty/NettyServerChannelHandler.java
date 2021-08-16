@@ -1,10 +1,11 @@
 package com.lmmmowi.redis.server.netty;
 
 import com.lmmmowi.redis.protocol.reply.RedisReply;
-import com.lmmmowi.redis.server.ClientHolder;
-import com.lmmmowi.redis.server.ClientInfo;
-import com.lmmmowi.redis.server.RedisCommandLine;
-import com.lmmmowi.redis.server.ServerProcessor;
+import com.lmmmowi.redis.server.RedisServerRuntime;
+import com.lmmmowi.redis.server.client.ClientHolder;
+import com.lmmmowi.redis.server.client.ClientInfo;
+import com.lmmmowi.redis.server.commandline.CommandLineProcessor;
+import com.lmmmowi.redis.server.commandline.RedisCommandLine;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -14,20 +15,23 @@ import io.netty.util.ReferenceCountUtil;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class NettyServerChannelHandler extends ChannelDuplexHandler {
+class NettyServerChannelHandler extends ChannelDuplexHandler {
 
-    private final ClientHolder clientHolder = ClientHolder.getInstance();
-    private final ServerProcessor serverProcessor;
+    private final ClientHolder clientHolder;
+    private final CommandLineProcessor commandLineProcessor;
 
-    public NettyServerChannelHandler(ServerProcessor serverProcessor) {
-        this.serverProcessor = serverProcessor;
+    NettyServerChannelHandler() {
+        RedisServerRuntime runtime = RedisServerRuntime.get();
+        clientHolder = runtime.getClientHolder();
+        commandLineProcessor = RedisServerRuntime.get().getCommandLineProcessor();
     }
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) {
+        // 为新建客户端连接创建对应的信息存储
         Channel channel = ctx.channel();
         String remoteAddress = channel.remoteAddress().toString();
-        ClientInfo clientInfo = clientHolder.init(remoteAddress);
+        ClientInfo clientInfo = clientHolder.newClient(remoteAddress);
 
         if (log.isDebugEnabled()) {
             log.debug("new client[{}] connected.", clientInfo);
@@ -54,14 +58,15 @@ public class NettyServerChannelHandler extends ChannelDuplexHandler {
 
         try {
             RedisMessage redisMessage = (RedisMessage) msg;
-            RedisCommandLine redisCommandLine = NettyRedisMessageConverter.convert(redisMessage);
+            String[] commandParts = NettyRedisMessageConverter.convert(redisMessage);
 
             if (log.isDebugEnabled()) {
-                log.debug("receive command from channel[{}]: {}", channel.id(), redisCommandLine);
+                log.debug("receive command from channel[{}]: {}", channel.id(), String.join(" ", commandParts));
             }
 
-            if (serverProcessor != null) {
-                RedisReply redisReply = serverProcessor.process(redisCommandLine);
+            if (commandLineProcessor != null) {
+                RedisCommandLine commandLine = new RedisCommandLine(commandParts);
+                RedisReply redisReply = commandLineProcessor.process(commandLine);
                 if (redisReply != null) {
                     channel.writeAndFlush(redisReply);
                 }

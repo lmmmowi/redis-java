@@ -16,7 +16,7 @@ class KeysCommandExecutor extends AbstractCommandExecutor<KeysCommand, DataStora
     @Override
     protected RedisReply doExecute(KeysCommand command) {
         String pattern = command.getPattern();
-        DbInstance db = currentDbInstance();
+        DbInstance db = ExecutorUtils.currentDbInstance();
         Collection<String> keys = db.keys(pattern);
 
         List<RedisReply> keyReplies = keys.stream().map(FullBulkStringReply::new).collect(Collectors.toList());

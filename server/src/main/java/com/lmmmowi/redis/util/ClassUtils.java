@@ -1,4 +1,4 @@
-package com.lmmmowi.redis.server.util;
+package com.lmmmowi.redis.util;
 
 import cn.hutool.core.util.ClassUtil;
 import cn.hutool.core.util.ReflectUtil;
@@ -9,6 +9,10 @@ import java.util.stream.Collectors;
 public class ClassUtils {
 
     private ClassUtils() {
+    }
+
+    public static Class<?> getTypeArgument(Class<?> clazz, int index) {
+        return ClassUtil.getTypeArgument(clazz, index);
     }
 
     public static <T> Set<Class<T>> scan(Package pkg, Class<T> interfaceType) {

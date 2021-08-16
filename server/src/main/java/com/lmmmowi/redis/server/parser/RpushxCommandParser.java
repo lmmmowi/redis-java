@@ -2,7 +2,7 @@ package com.lmmmowi.redis.server.parser;
 
 import com.lmmmowi.redis.protocol.command.RedisCommand;
 import com.lmmmowi.redis.protocol.command.RpushxCommand;
-import com.lmmmowi.redis.server.RedisCommandLine;
+import com.lmmmowi.redis.server.commandline.RedisCommandLine;
 import com.lmmmowi.redis.server.exception.CommandParseException;
 import com.lmmmowi.redis.server.exception.WrongNumberOfArgumentsException;
 
@@ -11,7 +11,7 @@ import java.util.Arrays;
 public class RpushxCommandParser implements RedisCommandParser {
     @Override
     public String getCommandKey() {
-        return "rpushx";
+        return "RPUSHX";
     }
 
     @Override

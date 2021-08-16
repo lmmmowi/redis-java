@@ -1,4 +1,4 @@
-package com.lmmmowi.redis.server;
+package com.lmmmowi.redis.server.client;
 
 import lombok.Data;
 

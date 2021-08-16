@@ -1,15 +1,18 @@
 package com.lmmmowi.redis.server.exception;
 
+import com.lmmmowi.redis.server.commandline.RedisCommandLine;
+
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class UnkownCommandException extends CommandParseException {
 
-    public UnkownCommandException(String[] parts) {
-        super(formatError(parts));
+    public UnkownCommandException(RedisCommandLine commandLine) {
+        super(formatError(commandLine));
     }
 
-    private static String formatError(String[] parts) {
+    private static String formatError(RedisCommandLine commandLine) {
+        String[] parts = commandLine.getParts();
         String command = parts[0];
         String args = IntStream.range(1, parts.length)
                 .boxed()

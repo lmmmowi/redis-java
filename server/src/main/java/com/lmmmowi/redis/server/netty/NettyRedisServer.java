@@ -1,7 +1,7 @@
 package com.lmmmowi.redis.server.netty;
 
+import com.lmmmowi.redis.configuration.ServerConfiguration;
 import com.lmmmowi.redis.server.RedisServer;
-import com.lmmmowi.redis.server.ServerProcessor;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -21,13 +21,13 @@ public class NettyRedisServer implements RedisServer {
     @Setter
     private ServerConfiguration configuration;
 
-    @Setter
-    private ServerProcessor serverProcessor;
+    private EventLoopGroup parentGroup;
+    private EventLoopGroup childGroup;
 
     @Override
     public void startup() {
-        EventLoopGroup parentGroup = new NioEventLoopGroup();
-        EventLoopGroup childGroup = new NioEventLoopGroup();
+        parentGroup = new NioEventLoopGroup();
+        childGroup = new NioEventLoopGroup();
 
         ServerBootstrap serverBootstrap = new ServerBootstrap()
                 .group(parentGroup, childGroup)
@@ -40,7 +40,7 @@ public class NettyRedisServer implements RedisServer {
                         pipeline.addLast(new RedisBulkStringAggregator());
                         pipeline.addLast(new RedisArrayAggregator());
                         pipeline.addLast(new RedisEncoder());
-                        pipeline.addLast(new NettyServerChannelHandler(serverProcessor));
+                        pipeline.addLast(new NettyServerChannelHandler());
                     }
                 });
 
@@ -50,6 +50,7 @@ public class NettyRedisServer implements RedisServer {
 
     @Override
     public void shutdown() {
-
+        parentGroup.shutdownGracefully();
+        childGroup.shutdownGracefully();
     }
 }

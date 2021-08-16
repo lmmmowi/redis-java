@@ -1,4 +1,4 @@
-package com.lmmmowi.redis.server.netty;
+package com.lmmmowi.redis.configuration;
 
 import lombok.Data;
 

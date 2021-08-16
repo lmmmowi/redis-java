@@ -1,19 +1,18 @@
-package com.lmmmowi.redis.server;
+package com.lmmmowi.redis.server.client;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ClientHolder {
-
-    private static final ClientHolder INSTANCE = new ClientHolder();
 
     private final ThreadLocal<ClientInfo> currentClientInfo = new ThreadLocal<>();
 
-    private ClientHolder() {
+    public static ClientHolder create() {
+        return new ClientHolder();
     }
 
-    public static ClientHolder getInstance() {
-        return INSTANCE;
-    }
-
-    public ClientInfo init(String name) {
+    public ClientInfo newClient(String name) {
         ClientInfo clientInfo = new ClientInfo(name);
         currentClientInfo.set(clientInfo);
         return clientInfo;

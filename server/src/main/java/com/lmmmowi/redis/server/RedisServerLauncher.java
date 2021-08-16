@@ -1,31 +1,27 @@
 package com.lmmmowi.redis.server;
 
-import com.lmmmowi.redis.db.RedisDb;
-import com.lmmmowi.redis.server.netty.NettyRedisServer;
-import com.lmmmowi.redis.server.netty.ServerConfiguration;
+import com.lmmmowi.redis.configuration.AofConfiguration;
+import com.lmmmowi.redis.configuration.RedisConfiguration;
+import com.lmmmowi.redis.configuration.ServerConfiguration;
 
 public class RedisServerLauncher {
 
     public static void main(String[] args) {
-        new RedisServerLauncher().run();
+        RedisConfiguration configuration = parseConfiguration(args);
+        new RedisServerRuntime(configuration).run();
     }
 
-    public void run() {
-        RedisDb.getInstance().init();
+    private static RedisConfiguration parseConfiguration(String[] args) {
+        ServerConfiguration serverConfiguration = new ServerConfiguration();
+        serverConfiguration.setPort(6378);
 
-        ServerConfiguration configuration = new ServerConfiguration();
-        configuration.setPort(6378);
+        AofConfiguration aofConfiguration = new AofConfiguration();
+        aofConfiguration.setEnabled(true);
+        aofConfiguration.setAppendOnlyFilePath("data/appendonly.aof");
 
-        NettyRedisServer server = new NettyRedisServer();
-        server.setServerProcessor(new DefaultServerProcessor());
-        server.setConfiguration(configuration);
-        server.startup();
-
-        Runtime.getRuntime().addShutdownHook(new Thread("redis-server-shutdown-hook") {
-            @Override
-            public void run() {
-                RedisDb.getInstance().destroy();
-            }
-        });
+        RedisConfiguration redisConfiguration = new RedisConfiguration();
+        redisConfiguration.setServer(serverConfiguration);
+        redisConfiguration.setAof(aofConfiguration);
+        return redisConfiguration;
     }
 }

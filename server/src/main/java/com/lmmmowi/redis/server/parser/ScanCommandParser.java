@@ -2,13 +2,13 @@ package com.lmmmowi.redis.server.parser;
 
 import com.lmmmowi.redis.protocol.command.RedisCommand;
 import com.lmmmowi.redis.protocol.command.ScanCommand;
-import com.lmmmowi.redis.server.RedisCommandLine;
+import com.lmmmowi.redis.server.commandline.RedisCommandLine;
 
 class ScanCommandParser implements RedisCommandParser {
 
     @Override
     public String getCommandKey() {
-        return "scan";
+        return "SCAN";
     }
 
     @Override

@@ -4,7 +4,7 @@ import com.lmmmowi.redis.protocol.command.ClientGetNameCommand;
 import com.lmmmowi.redis.protocol.command.ClientListCommand;
 import com.lmmmowi.redis.protocol.command.ClientSetNameCommand;
 import com.lmmmowi.redis.protocol.command.RedisCommand;
-import com.lmmmowi.redis.server.RedisCommandLine;
+import com.lmmmowi.redis.server.commandline.RedisCommandLine;
 import com.lmmmowi.redis.server.exception.CommandParseException;
 import com.lmmmowi.redis.server.exception.WrongNumberOfArgumentsException;
 
@@ -12,7 +12,7 @@ class ClientCommandParser implements RedisCommandParser {
 
     @Override
     public String getCommandKey() {
-        return "client";
+        return "CLIENT";
     }
 
     @Override

@@ -1,51 +1,43 @@
 package com.lmmmowi.redis.server.execute;
 
-import cn.hutool.core.util.ClassUtil;
-import com.lmmmowi.redis.db.DbInstance;
 import com.lmmmowi.redis.db.RedisDb;
 import com.lmmmowi.redis.db.aof.AofManager;
 import com.lmmmowi.redis.db.store.DataStorage;
-import com.lmmmowi.redis.db.store.list.ListStorage;
-import com.lmmmowi.redis.db.store.string.StringStorage;
 import com.lmmmowi.redis.protocol.command.RedisCommand;
 import com.lmmmowi.redis.protocol.reply.RedisReply;
-import com.lmmmowi.redis.server.ClientHolder;
-import com.lmmmowi.redis.server.ClientInfo;
+import com.lmmmowi.redis.server.client.ClientInfo;
+import com.lmmmowi.redis.util.ClassUtils;
 
 abstract class AbstractCommandExecutor<T extends RedisCommand, S extends DataStorage> implements RedisCommandExecutor {
 
-    private final ClientHolder clientHolder = ClientHolder.getInstance();
-    private final AofManager aofManager = AofManager.getInstance();
-
-    private Class<T> redisCommandType;
+    private Class<T> commandType;
     private Class<S> dataStorageType;
 
     AbstractCommandExecutor() {
-        this.redisCommandType = (Class<T>) ClassUtil.getTypeArgument(getClass(), 0);
-        this.dataStorageType = (Class<S>) ClassUtil.getTypeArgument(getClass(), 1);
+        this.commandType = (Class<T>) ClassUtils.getTypeArgument(getClass(), 0);
+        this.dataStorageType = (Class<S>) ClassUtils.getTypeArgument(getClass(), 1);
     }
 
     @Override
     public Class<T> getSupportCommandType() {
-        return this.redisCommandType;
+        return this.commandType;
     }
 
     @Override
     public RedisReply execute(RedisCommand command) {
-        RedisReply reply;
+        DataStorage storage = ExecutorUtils.getStorage(dataStorageType);
+        T typedCommand = commandType.cast(command);
+        S typedStorage = dataStorageType.cast(storage);
 
-        S storage = this.getStorage();
+        RedisReply reply;
         if (storage != null) {
-            reply = this.doExecute((T) command, storage);
+            reply = this.doExecute(typedCommand, typedStorage);
         } else {
-            reply = this.doExecute((T) command);
+            reply = this.doExecute(typedCommand);
         }
 
         // 命令执行完成后追加AOF日志
-        ClientInfo clientInfo = clientHolder.getClientInfo();
-        if (!clientInfo.isSystemClient()) {
-            aofManager.append(currentDbIndex(), command);
-        }
+        this.appendLog(command);
 
         return reply;
     }
@@ -58,23 +50,15 @@ abstract class AbstractCommandExecutor<T extends RedisCommand, S extends DataSto
         throw new UnsupportedOperationException();
     }
 
-    protected S getStorage() {
-        DataStorage dataStorage = null;
-        if (StringStorage.class.equals(dataStorageType)) {
-            dataStorage = currentDbInstance().getStringStorage();
-        } else if (ListStorage.class.equals(dataStorageType)) {
-            dataStorage = currentDbInstance().getListStorage();
+    private void appendLog(RedisCommand command) {
+        ClientInfo clientInfo = ExecutorUtils.currentClient();
+        if (clientInfo.isSystemClient()) {
+            return;
         }
-        return (S) dataStorage;
-    }
 
-    protected DbInstance currentDbInstance() {
-        int dbIndex = currentDbIndex();
-        return RedisDb.getInstance().select(dbIndex);
-    }
-
-    private int currentDbIndex() {
-        ClientInfo clientInfo = clientHolder.getClientInfo();
-        return clientInfo.getDbIndex();
+        RedisDb redisDb = ExecutorUtils.getRedisDb();
+        AofManager aofManager = redisDb.getAofManager();
+        int dbIndex = clientInfo.getDbIndex();
+        aofManager.append(dbIndex, command);
     }
 }

@@ -1,4 +1,4 @@
-package com.lmmmowi.redis.server;
+package com.lmmmowi.redis.server.commandline;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -1,35 +1,42 @@
 package com.lmmmowi.redis.db;
 
+import com.lmmmowi.redis.configuration.AofConfiguration;
 import com.lmmmowi.redis.db.aof.AofManager;
-import com.lmmmowi.redis.db.aof.AofResumeProcessor;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 import java.security.InvalidParameterException;
 
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class RedisDb {
 
     private static final int DB_NUM = 16;
 
-    private static final RedisDb INSTANCE = new RedisDb();
+    private DbInstance[] instances;
 
-    private DbInstance[] instances = new DbInstance[DB_NUM];
+    @Getter
+    private AofManager aofManager;
 
-    private RedisDb() {
-    }
-
-    public static RedisDb getInstance() {
-        return INSTANCE;
-    }
-
-    public void init() {
+    public static RedisDb create(AofConfiguration configuration) {
+        // 创建数据库示例
+        DbInstance[] instances = new DbInstance[DB_NUM];
         for (int i = 0; i < instances.length; i++) {
             instances[i] = new DbInstanceImpl();
         }
 
-        AofManager.getInstance().init(new AofResumeProcessor());
+        // 初始化AOF机制
+        AofManager aofManager = new AofManager(configuration);
+
+        return new RedisDb(instances, aofManager);
+    }
+
+    public void init() {
+        aofManager.init();
     }
 
     public void destroy() {
-        AofManager.getInstance().destroy();
+        aofManager.destroy();
     }
 
     public DbInstance select(int dbIndex) {
@@ -37,5 +44,10 @@ public class RedisDb {
             throw new InvalidParameterException("invalid db index");
         }
         return instances[dbIndex];
+    }
+
+    public void resumeData() {
+        // 通过AOF恢复数据
+        aofManager.resumeData();
     }
 }

@@ -5,17 +5,17 @@ import com.lmmmowi.redis.db.store.DataStorage;
 import com.lmmmowi.redis.protocol.command.SelectCommand;
 import com.lmmmowi.redis.protocol.reply.RedisReply;
 import com.lmmmowi.redis.protocol.reply.StatusReply;
-import com.lmmmowi.redis.server.ClientHolder;
-import com.lmmmowi.redis.server.ClientInfo;
+import com.lmmmowi.redis.server.client.ClientInfo;
 
 class SelectCommandExecutor extends AbstractCommandExecutor<SelectCommand, DataStorage> {
 
     @Override
     protected RedisReply doExecute(SelectCommand command) {
         int dbIndex = command.getDbIndex();
-        RedisDb.getInstance().select(dbIndex);
+        RedisDb redisDb = ExecutorUtils.getRedisDb();
+        redisDb.select(dbIndex);
 
-        ClientInfo clientInfo = ClientHolder.getInstance().getClientInfo();
+        ClientInfo clientInfo = ExecutorUtils.currentClient();
         clientInfo.setDbIndex(dbIndex);
 
         return new StatusReply("OK");

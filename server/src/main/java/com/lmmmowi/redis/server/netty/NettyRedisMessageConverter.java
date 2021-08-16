@@ -1,7 +1,6 @@
 package com.lmmmowi.redis.server.netty;
 
 import com.lmmmowi.redis.protocol.reply.*;
-import com.lmmmowi.redis.server.RedisCommandLine;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufUtil;
 import io.netty.channel.ChannelHandlerContext;
@@ -18,14 +17,13 @@ class NettyRedisMessageConverter {
     private NettyRedisMessageConverter() {
     }
 
-    static RedisCommandLine convert(RedisMessage redisMessage) {
+    static String[] convert(RedisMessage redisMessage) {
         ArrayRedisMessage arrayRedisMessage = (ArrayRedisMessage) redisMessage;
-        String[] parts = arrayRedisMessage.children()
+        return arrayRedisMessage.children()
                 .stream()
                 .map(FullBulkStringRedisMessage.class::cast)
                 .map(msg -> msg.content().toString(CharsetUtil.UTF_8))
                 .toArray(String[]::new);
-        return new RedisCommandLine(parts);
     }
 
     static RedisMessage convert(RedisReply redisReply, ChannelHandlerContext ctx) {

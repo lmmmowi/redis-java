@@ -2,7 +2,7 @@ package com.lmmmowi.redis.server.parser;
 
 import com.lmmmowi.redis.protocol.command.RedisCommand;
 import com.lmmmowi.redis.protocol.command.SetCommand;
-import com.lmmmowi.redis.server.RedisCommandLine;
+import com.lmmmowi.redis.server.commandline.RedisCommandLine;
 import com.lmmmowi.redis.server.exception.CommandParseException;
 import com.lmmmowi.redis.server.exception.WrongNumberOfArgumentsException;
 
@@ -10,7 +10,7 @@ class SetCommandParser implements RedisCommandParser {
 
     @Override
     public String getCommandKey() {
-        return "set";
+        return "SET";
     }
 
     @Override
